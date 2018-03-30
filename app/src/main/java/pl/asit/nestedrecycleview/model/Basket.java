@@ -37,7 +37,7 @@ public class Basket {
         this.items = items;
     }
 
-    public ArrayList<Article> getItems()
+    public ArrayList<Article> getArticles()
     {
         return this.items;
 

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,10 +22,12 @@ public class BasketDataAdapter extends RecyclerView.Adapter<BasketDataAdapter.Ba
     private ArrayList<Basket> baskets;
     private Context mContext;
     private RecyclerView.RecycledViewPool recycledViewPool;
+    private ArticleAdapterListener listener;
 
-    public BasketDataAdapter(ArrayList<Basket> dataList, Context mContext) {
+    public BasketDataAdapter(ArrayList<Basket> dataList, Context mContext, ArticleAdapterListener listener) {
         this.baskets = dataList;
         this.mContext = mContext;
+        this.listener = listener;
         recycledViewPool = new RecyclerView.RecycledViewPool();
     }
 
@@ -37,17 +38,60 @@ public class BasketDataAdapter extends RecyclerView.Adapter<BasketDataAdapter.Ba
         return basketHolder;
     }
 
+    public void toggleSelection(int basketId, int articleId) {
+
+        ArticleDataAdapter aadapt = (ArticleDataAdapter)this.basketHolder.recyclerView.getAdapter();
+        //aadapt.
+        ArticleDataAdapter.ArticleViewHolder h = (ArticleDataAdapter.ArticleViewHolder)this.basketHolder.recyclerView.getChildViewHolder(
+                this.basketHolder.recyclerView.getChildAt(basketId)
+        );
+
+
+//        if(h != null){
+//            h.
+//        }
+//        //this.basketHolder.recyclerView.getChildAt(basketId);
+//
+//                holder.recyclerView.getChildAt()
+//        currentSelectedIndex = pos;
+//        //if (selectedItems.get(pos, false)) {
+//        if (selectedItemsInt.containsKey(pos)){
+//
+//            //selectedItems.delete(pos);
+//            selectedItemsInt.remove(pos);
+//            animationItemsIndex.delete(pos);
+//        } else {
+//            //selectedItems.put(pos, true);
+//            selectedItemsInt.put(pos, true);
+//            animationItemsIndex.put(pos, true);
+//        }
+//        notifyItemChanged(pos);
+    }
+
+    public void clearSelections() {
+        //reverseAllAnimations = true;
+        //selectedItems.clear();
+        //selectedItemsInt.clear();
+        notifyDataSetChanged();
+    }
+
+    private BasketViewHolder basketHolder;
+    private ArticleDataAdapter articleAdapter;
     @Override
     public void onBindViewHolder(BasketViewHolder holder, int position) {
+        this.basketHolder = holder;
         final String sectionName = baskets.get(position).getName();
-        ArrayList singleSectionItems = baskets.get(position).getItems();
+        ArrayList articles = baskets.get(position).getArticles();
+
 
         holder. basketName.setText(sectionName);
-        ArticleDataAdapter adapter = new ArticleDataAdapter(singleSectionItems, mContext);
+        articleAdapter = new ArticleDataAdapter(articles, mContext, listener, position);
+
+
 
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext));//, LinearLayoutManager.HORIZONTAL, false));
-        holder.recyclerView.setAdapter(adapter);
+        holder.recyclerView.setAdapter(articleAdapter);
         holder.recyclerView.setRecycledViewPool(recycledViewPool);
 //        holder.btnMore.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -61,6 +105,11 @@ public class BasketDataAdapter extends RecyclerView.Adapter<BasketDataAdapter.Ba
     public int getItemCount() {
         return (baskets != null ? baskets.size() : 0);
     }
+
+//    public void resetAnimationIndex() {
+//
+//        animationItemsIndex.clear();
+//    }
 
 
     public class BasketViewHolder extends RecyclerView.ViewHolder {
